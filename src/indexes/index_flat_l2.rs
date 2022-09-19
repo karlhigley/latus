@@ -24,12 +24,11 @@ impl IndexFlatL2 {
         self.table.insert_many(vectors)
     }
 
-    // Figure out how to avoid hitting issues with Reverse here
-    pub fn query(&self, vector: &Vector, k: usize) -> Vec<Reverse<(Metric, usize)>> {
-        self.table.compute_metric(&l2_distance, vector, k)
+    pub fn query(&self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
+        self.table.bottom_k_by_metric(&l2_distance, vector, k)
     }
 
-    pub fn query_many(&self, vectors: &[Vector], k: usize) -> Vec<Vec<Reverse<(Metric, usize)>>> {
+    pub fn query_many(&self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {
         let mut results = Vec::new();
         for query_vector in vectors {
             results.push(self.query(query_vector, k))

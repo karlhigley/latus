@@ -9,6 +9,9 @@ license = "Apache-2.0"
 crate-type = ["cdylib"]
 
 [dependencies]
+# Sorting
+ordered-float = "3.0.0"
+
 # Core linear algebra
 ndarray = "0.15.6"
 ndarray-rand = "0.14.0"

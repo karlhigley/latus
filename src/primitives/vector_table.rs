@@ -1,6 +1,8 @@
 use super::super::primitives::vector::{Metric, Vector};
 use std::collections::BinaryHeap;
 
+use std::cmp::Reverse;
+
 #[derive(Debug, PartialEq)]
 pub struct VectorTable {
     pub vectors: Vec<Vector>,
@@ -31,7 +33,7 @@ impl VectorTable {
         self.vectors.extend(vectors.to_vec())
     }
 
-    pub fn compute_metric(
+    pub fn top_k_by_metric(
         &self,
         metric_fn: &dyn Fn(&Vector, &Vector) -> Metric,
         vector: &Vector,
@@ -44,6 +46,24 @@ impl VectorTable {
             heap.push((result, pos));
         }
         heap.into_sorted_vec()
+    }
+
+    pub fn bottom_k_by_metric(
+        &self,
+        metric_fn: &dyn Fn(&Vector, &Vector) -> Metric,
+        vector: &Vector,
+        k: usize,
+    ) -> Vec<(Metric, usize)> {
+        let mut heap: BinaryHeap<(Reverse<Metric>, usize)> = BinaryHeap::with_capacity(k);
+
+        for (pos, index_vector) in self.vectors.iter().enumerate() {
+            let result: Metric = metric_fn(&vector, index_vector);
+            heap.push((Reverse(result), pos));
+        }
+        heap.into_sorted_vec()
+            .iter()
+            .map(|r| (r.0 .0, r.1))
+            .collect()
     }
 }
 
@@ -64,5 +84,15 @@ mod tests {
         let mut expected: Option<&Vector> = vectors.get(0);
 
         assert_eq!(table.vectors.get(0), expected)
+    }
+
+    #[test]
+    fn top_k_by_metric() {
+        // TODO: Test with inner product
+    }
+
+    #[test]
+    fn bottom_k_by_metric() {
+        // TODO: Test with l2 distance
     }
 }

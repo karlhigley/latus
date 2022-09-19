@@ -26,7 +26,7 @@ impl IndexFlatIP {
     }
 
     pub fn query(&self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
-        self.table.compute_metric(&inner_product, vector, k)
+        self.table.top_k_by_metric(&inner_product, vector, k)
     }
 
     pub fn query_many(&self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {
