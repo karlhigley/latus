@@ -1,0 +1,28 @@
+[package]
+name = "latus"
+version = "0.1.0"
+edition = "2021"
+authors = ["Karl Higley <kmhigley@gmail.com>"]
+description = "Approximate nearest neighbor search with integrated filtering"
+license = "Apache-2.0"
+
+crate-type = ["cdylib"]
+
+[dependencies]
+# Core linear algebra
+ndarray = "0.15.6"
+ndarray-rand = "0.14.0"
+
+# Dataframes
+polars = "0.24.0"
+
+# Compressed representations
+# Useful for implementing filters and posting lists
+# bitpacking = "0.8.4"
+roaring = "0.10.1"
+
+# TODO: Apply rayon parallel iterators for multi-threading, useful for index creation
+# rayon = "1.5"
+
+# Python bindings
+pyo3 = { version = "0.17.1", features = ["extension-module"] }
