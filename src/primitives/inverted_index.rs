@@ -18,7 +18,7 @@ impl InvertedIndex {
         if !self.postings.contains_key(&key) {
             self.postings.insert(key, PostingList::new());
         }
-        let mut postings = self.postings.get_mut(&key);
+        let postings = self.postings.get_mut(&key);
         postings.unwrap().insert(value);
     }
 
@@ -26,7 +26,7 @@ impl InvertedIndex {
         if !self.postings.contains_key(&key) {
             self.postings.insert(key, PostingList::new());
         }
-        let mut postings = self.postings.get_mut(&key);
+        let postings = self.postings.get_mut(&key);
         postings.unwrap().insert_many(value);
     }
 }
