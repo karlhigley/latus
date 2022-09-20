@@ -17,7 +17,7 @@ ndarray = "0.15.6"
 ndarray-rand = "0.14.0"
 
 # Dataframes
-polars = "0.24.0"
+polars = { version = "0.24.0", features = ["dtype-categorical", "parquet", "partition_by", "sort_multiple"] }
 
 # Compressed representations
 # Useful for implementing filters and posting lists
@@ -29,3 +29,6 @@ roaring = "0.10.1"
 
 # Python bindings
 pyo3 = { version = "0.17.1", features = ["extension-module"] }
+
+[dev-dependencies]
+tempfile = "3.2.0"

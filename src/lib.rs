@@ -1,4 +1,5 @@
 mod indexes;
+mod io;
 mod primitives;
 
 #[cfg(test)]
