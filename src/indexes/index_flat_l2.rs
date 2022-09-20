@@ -1,6 +1,3 @@
-use std::cmp::Reverse;
-use std::collections::BinaryHeap;
-
 use super::super::primitives::vector::{l2_distance, Metric, Vector};
 use super::super::primitives::vector_table::VectorTable;
 

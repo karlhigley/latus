@@ -1,5 +1,3 @@
-use std::collections::BinaryHeap;
-
 use super::super::primitives::vector::{inner_product, Metric, Vector};
 use super::super::primitives::vector_table::VectorTable;
 

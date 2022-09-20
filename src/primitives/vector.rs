@@ -6,8 +6,6 @@ use ndarray_rand::rand_distr::Uniform;
 use ndarray_rand::RandomExt;
 use ordered_float::OrderedFloat;
 
-use std::cmp::Reverse;
-
 pub type Metric = OrderedFloat<f32>;
 pub type Vector = Array1<f32>;
 
