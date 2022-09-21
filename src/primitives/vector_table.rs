@@ -1,4 +1,4 @@
-use super::super::primitives::vector::{Metric, Vector};
+use crate::primitives::vector::{Metric, Vector};
 use std::collections::BinaryHeap;
 
 use std::cmp::Reverse;
@@ -69,8 +69,8 @@ impl VectorTable {
 
 #[cfg(test)]
 mod tests {
-    use super::super::vector::random_vector;
     use super::{Vector, VectorTable};
+    use crate::primitives::vector::random_vector;
 
     #[test]
     fn insert_many() {

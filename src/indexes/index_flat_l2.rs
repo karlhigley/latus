@@ -1,5 +1,5 @@
-use super::super::primitives::vector::{l2_distance, Metric, Vector};
-use super::super::primitives::vector_table::VectorTable;
+use crate::primitives::vector::{l2_distance, Metric, Vector};
+use crate::primitives::vector_table::VectorTable;
 
 #[derive(Debug, PartialEq)]
 pub struct IndexFlatL2 {
@@ -36,8 +36,8 @@ impl IndexFlatL2 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::primitives::vector::random_vector;
     use super::{IndexFlatL2, Vector};
+    use crate::primitives::vector::random_vector;
 
     #[test]
     fn insert_many() {

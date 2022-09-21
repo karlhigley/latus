@@ -1,5 +1,6 @@
-use super::super::primitives::vector::{inner_product, Metric, Vector};
-use super::super::primitives::vector_table::VectorTable;
+use crate::indexes::traits::{Indexable, Queryable};
+use crate::primitives::vector::{inner_product, Metric, Vector};
+use crate::primitives::vector_table::VectorTable;
 
 // TODO: Refactor this and IndexFlatL2 to implement trait(s)
 
@@ -38,8 +39,8 @@ impl IndexFlatIP {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::primitives::vector::random_vector;
     use super::{IndexFlatIP, Vector};
+    use crate::primitives::vector::random_vector;
 
     #[test]
     fn insert_many() {
