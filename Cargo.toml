@@ -6,11 +6,13 @@ authors = ["Karl Higley <kmhigley@gmail.com>"]
 description = "Approximate nearest neighbor search with integrated filtering"
 license = "Apache-2.0"
 
-crate-type = ["cdylib"]
+[lib]
+crate-type = ["cdylib", "lib"]
 
 [dependencies]
 # Sorting
 ordered-float = "3.0.0"
+min-max-heap = "1.3.0"
 
 # Core linear algebra
 ndarray = "0.15.6"
@@ -31,4 +33,16 @@ roaring = "0.10.1"
 pyo3 = { version = "0.17.1", features = ["extension-module"] }
 
 [dev-dependencies]
+criterion = "0.4"
 tempfile = "3.2.0"
+
+[profile.bench]
+debug = true
+
+[[bench]]
+name = "indexes"
+harness = false
+
+[[bench]]
+name = "distances"
+harness = false

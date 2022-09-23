@@ -1,13 +1,14 @@
 extern crate ndarray;
 extern crate ndarray_rand;
 
-use ndarray::Array1;
+use ndarray::{Array1, Array2};
 use ndarray_rand::rand_distr::Uniform;
 use ndarray_rand::RandomExt;
 use ordered_float::OrderedFloat;
 
 pub type Metric = OrderedFloat<f32>;
 pub type Vector = Array1<f32>;
+pub type Matrix = Array2<f32>;
 
 pub fn random_vector(dim: usize) -> Vector {
     let dist = Uniform::new(0., 1.);
@@ -16,12 +17,17 @@ pub fn random_vector(dim: usize) -> Vector {
 }
 
 pub fn l2_distance(a: &Vector, b: &Vector) -> Metric {
-    let sub = a - b;
-    OrderedFloat::<f32>((&sub * &sub).sum().sqrt())
+    let sub = b - a;
+    OrderedFloat::<f32>(sub.dot(&sub).sqrt())
 }
 
 pub fn inner_product(a: &Vector, b: &Vector) -> Metric {
-    OrderedFloat::<f32>((a * b).sum())
+    OrderedFloat::<f32>(a.dot(b))
+}
+
+pub fn matrix_inner_product(a: &Vector, b: &Matrix) -> Vec<Metric> {
+    let result = b.dot(a);
+    result.iter().map(|r| OrderedFloat::<f32>(*r)).collect()
 }
 
 // "y" is the half-plane dimension
@@ -44,12 +50,12 @@ pub fn half_plane_distance(a: &Vector, b: &Vector) -> Metric {
     let y_diff_ref = b_y + a_y;
 
     let x_diff = b_x - a_x;
-    let x_diff_squared = x_diff.mapv(|x| x.powi(2));
+    let x_diff_squared = x_diff.dot(&x_diff);
 
     // Magnitude of the diffs with raw y coord
     // and y coord reflected across the plane
-    let diff_mag = (x_diff_squared.sum() + y_diff * y_diff).sqrt();
-    let diff_mag_ref = (x_diff_squared.sum() + y_diff_ref * y_diff_ref).sqrt();
+    let diff_mag = (x_diff_squared + y_diff * y_diff).sqrt();
+    let diff_mag_ref = (x_diff_squared + y_diff_ref * y_diff_ref).sqrt();
 
     // Put it all together to compute the distance
     let numerator = diff_mag + diff_mag_ref;

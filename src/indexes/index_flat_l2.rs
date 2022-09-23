@@ -7,14 +7,14 @@ pub struct IndexFlatL2 {
 }
 
 impl IndexFlatL2 {
-    pub fn new() -> IndexFlatL2 {
+    pub fn new(dim: usize) -> IndexFlatL2 {
         IndexFlatL2 {
-            table: VectorTable::new(),
+            table: VectorTable::new(dim, false),
         }
     }
 
     pub fn insert(&mut self, vector: Vector) {
-        self.table.insert(vector)
+        self.table.insert(&vector)
     }
 
     pub fn insert_many(&mut self, vectors: &[Vector]) {
@@ -41,18 +41,25 @@ mod tests {
 
     #[test]
     fn insert_many() {
-        let vectors: Vec<Vector> = (0..1000).map(|_| random_vector(128)).collect();
-        let mut index: IndexFlatL2 = IndexFlatL2::new();
+        let num_vectors = 1000;
+        let dim = 128;
+
+        let vectors: Vec<Vector> = (0..num_vectors).map(|_| random_vector(dim)).collect();
+        let mut index: IndexFlatL2 = IndexFlatL2::new(dim);
         index.insert_many(&vectors);
     }
 
     #[test]
     fn query() {
-        let vectors: Vec<Vector> = (0..1000).map(|_| random_vector(128)).collect();
-        let mut index: IndexFlatL2 = IndexFlatL2::new();
+        let num_vectors = 1000;
+        let dim = 128;
+        let k = 10;
+
+        let vectors: Vec<Vector> = (0..num_vectors).map(|_| random_vector(dim)).collect();
+        let mut index: IndexFlatL2 = IndexFlatL2::new(dim);
         index.insert_many(&vectors);
 
-        let query_vector = random_vector(128);
-        let result = index.query(&query_vector, 10);
+        let query_vector = random_vector(dim);
+        let result = index.query(&query_vector, k);
     }
 }
