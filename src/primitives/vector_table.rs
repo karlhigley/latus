@@ -1,4 +1,4 @@
-use crate::primitives::vector::{Matrix, Metric, Vector};
+use crate::primitives::vector::{Matrix, Metric, MetricVector, Vector};
 
 use ndarray::Array;
 
@@ -7,8 +7,9 @@ use std::collections::BinaryHeap;
 use std::iter::zip;
 
 use min_max_heap::MinMaxHeap;
+use ordered_float::OrderedFloat;
 
-const CHUNK_SIZE: usize = 2;
+const CHUNK_SIZE: usize = 4096;
 
 #[derive(Debug, PartialEq)]
 pub struct VectorTable {
@@ -17,16 +18,6 @@ pub struct VectorTable {
     vectors: Vec<Vector>,
     chunks: Vec<Matrix>,
 }
-
-// TODO: Add distance computation functionality to this struct
-// Right now we're letting other structs reach into this one's data
-// instead of encapsulating the vectors and bringing the computation
-// to the data
-
-// TODO: Once we've improved the interface to bring the computation inside,
-// then we can convert the internal representation to contain a vec of matrices
-// and a vec of vectors, converting the vec of vectors to a matrix block when it
-// hits a certain size. Then distance computations can be done on the matrix blocks
 
 impl VectorTable {
     pub fn new(dim: usize, chunking: bool) -> VectorTable {
@@ -62,55 +53,22 @@ impl VectorTable {
             let new_chunk = self.create_chunk(chunk_size, true);
 
             self.chunks.push(new_chunk);
-            // self.vectors = self.vectors[chunk_size..].to_vec()
         }
     }
 
     fn create_chunk(&mut self, chunk_size: usize, drain: bool) -> Matrix {
-        assert!(self.vectors.len() > 0, "no vectors to create chunk with");
-        assert!(
-            chunk_size <= self.vectors.len(),
-            "Chunk size is larger than vector table"
-        );
         let flat: Vec<f32> = if drain {
             self.vectors.drain(0..chunk_size).flatten().collect()
         } else {
             self.vectors[0..chunk_size]
                 .iter()
-                .cloned()
                 .flatten()
+                .cloned()
                 .collect()
         };
 
-        assert!(flat.len() > 0, "no floats drained from vectors to chunk");
         let shape = (chunk_size, self.dim);
 
-        assert!(
-            flat.len() == shape.0 * shape.1,
-            "flat len {} doesn't match shape ({},{})",
-            flat.len(),
-            shape.0,
-            shape.1
-        );
-        Matrix::from_shape_vec(shape, flat).unwrap()
-    }
-
-    fn create_temp_chunk(&self, chunk_size: usize) -> Matrix {
-        let flat: Vec<f32> = self.vectors[0..chunk_size]
-            .iter()
-            .cloned()
-            .flatten()
-            .collect();
-
-        let shape = (chunk_size, self.dim);
-
-        assert!(
-            flat.len() == shape.0 * shape.1,
-            "flat len {} doesn't match shape ({},{})",
-            flat.len(),
-            shape.0,
-            shape.1
-        );
         Matrix::from_shape_vec(shape, flat).unwrap()
     }
 
@@ -142,64 +100,40 @@ impl VectorTable {
 
     pub fn matrix_top_k_by_metric(
         &mut self,
-        metric_fn: &dyn Fn(&Vector, &Matrix) -> Vec<Metric>,
+        metric_fn: &dyn Fn(&Vector, &Matrix) -> Vector,
         vector: &Vector,
         k: usize,
     ) -> Vec<(Metric, usize)> {
         let mut heap: MinMaxHeap<(Metric, usize)> = MinMaxHeap::with_capacity(k);
 
-        assert!(
-            self.vectors.len() > 0 || self.chunks.len() > 0,
-            "nothing in the index"
-        );
+        // This is fine as long as the number of unchunked vectors is small,
+        // but it would be even better to delegate to the other implementation here.
+        // For that we'd need references to both distance functions though
+        let num_vectors = self.vectors.len();
+        let vector_chunk = self.create_chunk(num_vectors, false);
 
         let mut chunks: Vec<&Matrix> = Vec::new();
         for reference in self.chunks.iter() {
             chunks.push(reference);
         }
-        let num_vectors = self.vectors.len();
 
-        let vector_chunk = self.create_temp_chunk(num_vectors);
         if self.vectors.len() > 0 {
             chunks.push(&vector_chunk);
-
-            assert!(chunks.len() >= 1, "no chunks found");
-            assert!(
-                chunks.last().unwrap().shape()[0] == num_vectors,
-                "unexpected value for chunk size {} (expected {})",
-                chunks.last().unwrap().shape()[0],
-                num_vectors
-            );
         }
 
         // Iterate through the chunks computing distances and inserting into the heap
         for (chunk_index, chunk) in chunks.iter().enumerate() {
-            assert!(chunk.shape()[0] > 0, "chunk is empty");
-
-            let results: Vec<Metric> = metric_fn(&vector, &chunk);
-
-            assert!(results.len() > 0, "no results found");
+            let results: Vector = metric_fn(&vector, &chunk);
 
             let chunk_pos = chunk_index * CHUNK_SIZE;
             let result_positions = Array::from_iter(0..chunk.shape()[0]) + chunk_pos as usize;
-
-            assert!(result_positions.len() > 0, "no result positions found");
-            assert!(
-                results.len() == result_positions.len(),
-                "results len={} not equal to positions len={}",
-                results.len(),
-                result_positions.len()
-            );
-
             let result_pairs = zip(results, result_positions);
-
-            assert!(result_pairs.len() > 0, "no result pairs found");
 
             for (result, pos) in result_pairs {
                 if heap.len() >= k {
-                    heap.push_pop_min((result, pos));
+                    heap.push_pop_min((OrderedFloat(result), pos));
                 } else {
-                    heap.push((result, pos));
+                    heap.push((OrderedFloat(result), pos));
                 }
             }
         }

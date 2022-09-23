@@ -8,6 +8,7 @@ use ordered_float::OrderedFloat;
 
 pub type Metric = OrderedFloat<f32>;
 pub type Vector = Array1<f32>;
+pub type MetricVector = Array1<Metric>;
 pub type Matrix = Array2<f32>;
 
 pub fn random_vector(dim: usize) -> Vector {
@@ -25,9 +26,8 @@ pub fn inner_product(a: &Vector, b: &Vector) -> Metric {
     OrderedFloat::<f32>(a.dot(b))
 }
 
-pub fn matrix_inner_product(a: &Vector, b: &Matrix) -> Vec<Metric> {
-    let result = b.dot(a);
-    result.iter().map(|r| OrderedFloat::<f32>(*r)).collect()
+pub fn matrix_inner_product(a: &Vector, b: &Matrix) -> Vector {
+    b.dot(a)
 }
 
 // "y" is the half-plane dimension
