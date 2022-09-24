@@ -1,4 +1,5 @@
-use crate::primitives::vector::{Matrix, Metric, MetricVector, Vector};
+use crate::prelude::*;
+use crate::primitives::vector::Metric;
 
 use ndarray::Array;
 

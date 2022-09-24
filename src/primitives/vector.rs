@@ -1,15 +1,15 @@
+use crate::prelude::*;
+
 extern crate ndarray;
 extern crate ndarray_rand;
 
-use ndarray::{Array1, Array2, Axis};
+use ndarray::Axis;
 use ndarray_rand::rand_distr::Uniform;
 use ndarray_rand::RandomExt;
+
 use ordered_float::OrderedFloat;
 
 pub type Metric = OrderedFloat<f32>;
-pub type Vector = Array1<f32>;
-pub type MetricVector = Array1<Metric>;
-pub type Matrix = Array2<f32>;
 
 pub fn random_vector(dim: usize) -> Vector {
     let dist = Uniform::new(0., 1.);

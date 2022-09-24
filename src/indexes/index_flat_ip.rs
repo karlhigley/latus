@@ -1,4 +1,5 @@
-use crate::primitives::vector::{inner_product, matrix_inner_product, Metric, Vector};
+use crate::prelude::*;
+use crate::primitives::vector::{inner_product, matrix_inner_product, Metric};
 use crate::primitives::vector_table::VectorTable;
 
 // TODO: Refactor this and IndexFlatL2 to implement trait(s)
