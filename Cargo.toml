@@ -40,7 +40,15 @@ tempfile = "3.2.0"
 debug = true
 
 [[bench]]
-name = "indexes"
+name = "index_flat_hp"
+harness = false
+
+[[bench]]
+name = "index_flat_ip"
+harness = false
+
+[[bench]]
+name = "index_flat_l2"
 harness = false
 
 [[bench]]
