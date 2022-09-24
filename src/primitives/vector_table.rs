@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use crate::primitives::vector::Metric;
+use crate::primitives::distances::Metric;
 
 use ndarray::Array;
 

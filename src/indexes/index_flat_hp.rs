@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use crate::primitives::vector::{half_plane_distance, Metric};
+use crate::primitives::distances::{half_plane_distance, Metric};
 use crate::primitives::vector_table::VectorTable;
 
 // TODO: Refactor this and IndexFlatL2 to implement trait(s)

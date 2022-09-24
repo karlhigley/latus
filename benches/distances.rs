@@ -3,9 +3,8 @@ extern crate latus;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use latus::prelude::*;
-use latus::primitives::vector::{
-    half_plane_distance, l2_distance, matrix_inner_product, random_vector,
-};
+use latus::primitives::distances::{half_plane_distance, l2_distance, matrix_inner_product};
+use latus::primitives::vector::random_vector;
 use latus::primitives::vector_table::VectorTable;
 
 fn inner_product_top_k(table: &mut VectorTable, vector: &Vector, k: usize) {
