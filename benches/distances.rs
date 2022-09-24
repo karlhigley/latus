@@ -8,7 +8,7 @@ use latus::primitives::vector::random_vector;
 use latus::primitives::vector_table::VectorTable;
 
 fn inner_product_top_k(table: &mut VectorTable, vector: &Vector, k: usize) {
-    table.matrix_top_k_by_metric(&matrix_inner_product, vector, k);
+    table.matrix_top_k_by_metric(&matrix_inner_product, vector, k, false);
 }
 
 fn l2_distance_bottom_k(table: &VectorTable, vector: &Vector, k: usize) {

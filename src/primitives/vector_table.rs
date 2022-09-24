@@ -104,8 +104,14 @@ impl VectorTable {
         metric_fn: &dyn Fn(&Vector, &Matrix) -> Vector,
         vector: &Vector,
         k: usize,
+        asc: bool,
     ) -> Vec<(Metric, usize)> {
         let mut heap: MinMaxHeap<(Metric, usize)> = MinMaxHeap::with_capacity(k);
+        let push_pop_fn = if asc {
+            MinMaxHeap::<(Metric, usize)>::push_pop_max
+        } else {
+            MinMaxHeap::<(Metric, usize)>::push_pop_min
+        };
 
         // This is fine as long as the number of unchunked vectors is small,
         // but it would be even better to delegate to the other implementation here.
@@ -131,10 +137,11 @@ impl VectorTable {
             let result_pairs = zip(results, result_positions);
 
             for (result, pos) in result_pairs {
+                let element = (OrderedFloat(result), pos);
                 if heap.len() >= k {
-                    heap.push_pop_min((OrderedFloat(result), pos));
+                    push_pop_fn(&mut heap, element);
                 } else {
-                    heap.push((OrderedFloat(result), pos));
+                    heap.push(element);
                 }
             }
         }

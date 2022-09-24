@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use crate::primitives::distances::{half_plane_distance, Metric};
+use crate::primitives::distances::{half_plane_distance, matrix_half_plane_dist, Metric};
 use crate::primitives::vector_table::VectorTable;
 
 // TODO: Refactor this and IndexFlatL2 to implement trait(s)
@@ -29,10 +29,10 @@ impl IndexFlatHP {
         self.table.top_k_by_metric(&half_plane_distance, vector, k)
     }
 
-    // pub fn matrix_query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
-    //     self.table
-    //         .matrix_top_k_by_metric(&matrix_half_plane_dist, vector, k)
-    // }
+    pub fn matrix_query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
+        self.table
+            .matrix_top_k_by_metric(&matrix_half_plane_dist, vector, k, true)
+    }
 
     pub fn query_many(&mut self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {
         let mut results = Vec::new();

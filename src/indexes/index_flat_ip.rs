@@ -30,7 +30,7 @@ impl IndexFlatIP {
 
     pub fn matrix_query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
         self.table
-            .matrix_top_k_by_metric(&matrix_inner_product, vector, k)
+            .matrix_top_k_by_metric(&matrix_inner_product, vector, k, false)
     }
 
     pub fn query_many(&mut self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {
