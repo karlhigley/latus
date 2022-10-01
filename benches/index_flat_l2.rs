@@ -2,7 +2,7 @@ extern crate latus;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use latus::indexes::index_flat_l2::IndexFlatL2;
+use latus::indexes::flat::l2::IndexFlatL2;
 use latus::primitives::vector::random_vector;
 
 fn index_flat_l2_query(index: &IndexFlatL2, k: usize, dim: usize) {

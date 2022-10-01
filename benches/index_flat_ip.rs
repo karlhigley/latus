@@ -1,7 +1,7 @@
 extern crate latus;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use latus::indexes::index_flat_ip::IndexFlatIP;
+use latus::indexes::flat::ip::IndexFlatIP;
 use latus::primitives::vector::random_vector;
 
 fn index_flat_ip_query(index: &mut IndexFlatIP, k: usize, dim: usize) {

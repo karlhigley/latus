@@ -1,7 +1,7 @@
 extern crate latus;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use latus::indexes::index_flat_hp::IndexFlatHP;
+use latus::indexes::flat::hp::IndexFlatHP;
 use latus::primitives::vector::random_vector;
 
 fn index_flat_hp_query(index: &mut IndexFlatHP, k: usize, dim: usize) {
