@@ -5,22 +5,7 @@ extern crate ndarray_rand;
 
 use ndarray::Axis;
 
-use ordered_float::OrderedFloat;
-
 use std::ops::Mul;
-
-pub fn l2_distance(a: &Vector, b: &Vector) -> f32 {
-    let sub = b - a;
-    sub.dot(&sub).sqrt()
-}
-
-pub fn inner_product(a: &Vector, b: &Vector) -> f32 {
-    a.dot(b)
-}
-
-pub fn matrix_inner_product(a: &Vector, b: &Matrix) -> Vector {
-    b.dot(a)
-}
 
 pub fn half_plane_distance(a: &Vector, b: &Vector) -> f32 {
     // "y" is the half-plane dimension
@@ -95,43 +80,4 @@ pub fn matrix_half_plane_dist(a: &Vector, b: &Matrix) -> Vector {
     let dist = 2. * (numerator / denominator).mapv(f32::ln);
 
     dist
-}
-
-#[cfg(test)]
-mod tests {
-    use super::Vector;
-    use super::{inner_product, l2_distance};
-
-    #[test]
-    fn ordered_float() {
-        use ordered_float::OrderedFloat;
-        use std::f32::NAN;
-
-        let mut v = [OrderedFloat(NAN), OrderedFloat(2.0), OrderedFloat(1.0)];
-        v.sort();
-        assert_eq!(v, [OrderedFloat(1.0), OrderedFloat(2.0), OrderedFloat(NAN)]);
-        v.sort();
-        v.reverse();
-        assert_eq!(v, [OrderedFloat(NAN), OrderedFloat(2.0), OrderedFloat(1.0)]);
-    }
-
-    // #[test]
-    // fn l2_distance() {}
-
-    // #[test]
-    // fn inner_product() {}
-
-    // #[test]
-    // fn insert_many() {
-    //     let mut vector: Vector = random_vector(128);
-
-    //     let vectors: [Vector; 1] = [vector];
-
-    //     let mut table: VectorTable = VectorTable::new();
-    //     table.insert_many(&vectors);
-
-    //     let mut expected: Option<&Vector> = vectors.get(0);
-
-    //     assert_eq!(table.vectors.get(0), expected)
-    // }
 }

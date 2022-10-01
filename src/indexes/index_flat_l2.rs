@@ -1,5 +1,5 @@
+use crate::distances::lp_norm::l2_distance;
 use crate::prelude::*;
-use crate::primitives::distances::l2_distance;
 use crate::primitives::vector_table::{Metric, VectorTable};
 
 #[derive(Debug, PartialEq)]

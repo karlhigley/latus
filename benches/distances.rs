@@ -2,8 +2,10 @@ extern crate latus;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
+use latus::distances::angular::matrix_inner_product;
+use latus::distances::hyperbolic::half_plane_distance;
+use latus::distances::lp_norm::l2_distance;
 use latus::prelude::*;
-use latus::primitives::distances::{half_plane_distance, l2_distance, matrix_inner_product};
 use latus::primitives::vector::random_vector;
 use latus::primitives::vector_table::VectorTable;
 

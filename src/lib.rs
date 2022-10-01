@@ -1,3 +1,4 @@
+pub mod distances;
 pub mod indexes;
 pub mod io;
 pub mod prelude;
