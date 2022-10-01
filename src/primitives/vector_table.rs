@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use crate::primitives::distances::Metric;
 
 use ndarray::Array;
 
@@ -9,6 +8,8 @@ use std::iter::zip;
 
 use min_max_heap::MinMaxHeap;
 use ordered_float::OrderedFloat;
+
+pub type Metric = OrderedFloat<f32>;
 
 const CHUNK_SIZE: usize = 4096;
 
@@ -82,18 +83,19 @@ impl VectorTable {
 
     pub fn top_k_by_metric(
         &self,
-        metric_fn: &dyn Fn(&Vector, &Vector) -> Metric,
+        metric_fn: &dyn Fn(&Vector, &Vector) -> f32,
         vector: &Vector,
         k: usize,
     ) -> Vec<(Metric, usize)> {
         let mut heap: MinMaxHeap<(Metric, usize)> = MinMaxHeap::with_capacity(k);
 
         for (pos, index_vector) in self.vectors.iter().enumerate() {
-            let result: Metric = metric_fn(&vector, index_vector);
+            let result = metric_fn(&vector, index_vector);
+            let element = (OrderedFloat(result), pos);
             if heap.len() >= k {
-                heap.push_pop_min((result, pos));
+                heap.push_pop_min(element);
             } else {
-                heap.push((result, pos));
+                heap.push(element);
             }
         }
         heap.into_vec_desc()
@@ -151,15 +153,16 @@ impl VectorTable {
 
     pub fn bottom_k_by_metric(
         &self,
-        metric_fn: &dyn Fn(&Vector, &Vector) -> Metric,
+        metric_fn: &dyn Fn(&Vector, &Vector) -> f32,
         vector: &Vector,
         k: usize,
     ) -> Vec<(Metric, usize)> {
         let mut heap: BinaryHeap<(Reverse<Metric>, usize)> = BinaryHeap::with_capacity(k);
 
         for (pos, index_vector) in self.vectors.iter().enumerate() {
-            let result: Metric = metric_fn(&vector, index_vector);
-            heap.push((Reverse(result), pos));
+            let result = metric_fn(&vector, index_vector);
+            let element = (Reverse(OrderedFloat(result)), pos);
+            heap.push(element);
         }
         heap.into_sorted_vec()
             .iter()

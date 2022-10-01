@@ -1,6 +1,6 @@
 use crate::prelude::*;
-use crate::primitives::distances::{inner_product, matrix_inner_product, Metric};
-use crate::primitives::vector_table::VectorTable;
+use crate::primitives::distances::{inner_product, matrix_inner_product};
+use crate::primitives::vector_table::{Metric, VectorTable};
 
 // TODO: Refactor this and IndexFlatL2 to implement trait(s)
 

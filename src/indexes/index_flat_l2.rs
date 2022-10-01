@@ -1,6 +1,6 @@
 use crate::prelude::*;
-use crate::primitives::distances::{l2_distance, Metric};
-use crate::primitives::vector_table::VectorTable;
+use crate::primitives::distances::l2_distance;
+use crate::primitives::vector_table::{Metric, VectorTable};
 
 #[derive(Debug, PartialEq)]
 pub struct IndexFlatL2 {

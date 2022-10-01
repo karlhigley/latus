@@ -21,9 +21,9 @@ fn query_benchmark(c: &mut Criterion) {
 
     for _ in 0..index_size {
         let vector = random_vector(dim);
-        index_l2.insert(&vector.clone());
+        index_l2.insert(vector.clone());
         // index_l2_matrix.insert(&vector.clone());
-        index_l2_chunked.insert(&vector.clone());
+        // index_l2_chunked.insert(&vector.clone());
     }
 
     c.bench_function("index_flat_l2 query", |b| {

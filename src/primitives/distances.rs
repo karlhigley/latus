@@ -9,23 +9,20 @@ use ordered_float::OrderedFloat;
 
 use std::ops::Mul;
 
-// TODO: Remove Metric type alias and apply ordered floats when pushing into a heap if necessary
-pub type Metric = OrderedFloat<f32>;
-
-pub fn l2_distance(a: &Vector, b: &Vector) -> Metric {
+pub fn l2_distance(a: &Vector, b: &Vector) -> f32 {
     let sub = b - a;
-    OrderedFloat::<f32>(sub.dot(&sub).sqrt())
+    sub.dot(&sub).sqrt()
 }
 
-pub fn inner_product(a: &Vector, b: &Vector) -> Metric {
-    OrderedFloat::<f32>(a.dot(b))
+pub fn inner_product(a: &Vector, b: &Vector) -> f32 {
+    a.dot(b)
 }
 
 pub fn matrix_inner_product(a: &Vector, b: &Matrix) -> Vector {
     b.dot(a)
 }
 
-pub fn half_plane_distance(a: &Vector, b: &Vector) -> Metric {
+pub fn half_plane_distance(a: &Vector, b: &Vector) -> f32 {
     // "y" is the half-plane dimension
     // "x" is all the rest of the dimensions
     let axis = Axis(0);
@@ -56,7 +53,7 @@ pub fn half_plane_distance(a: &Vector, b: &Vector) -> Metric {
     let denominator = 2. * (a_y * b_y).sqrt();
     let dist = 2. * (numerator / denominator).ln();
 
-    OrderedFloat::<f32>(dist)
+    dist
 }
 
 pub fn matrix_half_plane_dist(a: &Vector, b: &Matrix) -> Vector {
@@ -103,7 +100,7 @@ pub fn matrix_half_plane_dist(a: &Vector, b: &Matrix) -> Vector {
 #[cfg(test)]
 mod tests {
     use super::Vector;
-    use super::{inner_product, l2_distance, Metric};
+    use super::{inner_product, l2_distance};
 
     #[test]
     fn ordered_float() {
