@@ -1,16 +1,15 @@
+use crate::distances::Distance;
 use crate::prelude::*;
 
-extern crate ndarray;
-extern crate ndarray_rand;
+#[derive(Debug, PartialEq)]
+pub struct InnerProduct {}
 
-use ndarray::Axis;
+impl Distance for InnerProduct {
+    fn vector_dist(&self, a: &Vector, b: &Vector) -> f32 {
+        a.dot(b)
+    }
 
-use std::ops::Mul;
-
-pub fn inner_product(a: &Vector, b: &Vector) -> f32 {
-    a.dot(b)
-}
-
-pub fn matrix_inner_product(a: &Vector, b: &Matrix) -> Vector {
-    b.dot(a)
+    fn matrix_dist(&self, a: &Vector, b: &Matrix) -> Vector {
+        b.dot(a)
+    }
 }

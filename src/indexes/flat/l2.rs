@@ -1,16 +1,18 @@
-use crate::distances::lp_norm::l2_distance;
+use crate::distances::lp_norm::L2;
 use crate::prelude::*;
 use crate::primitives::vector_table::{Metric, VectorTable};
 
 #[derive(Debug, PartialEq)]
 pub struct IndexFlatL2 {
     pub table: VectorTable,
+    distance: L2,
 }
 
 impl IndexFlatL2 {
     pub fn new(dim: usize) -> IndexFlatL2 {
         IndexFlatL2 {
             table: VectorTable::new(dim, false),
+            distance: L2 {},
         }
     }
 
@@ -23,7 +25,12 @@ impl IndexFlatL2 {
     }
 
     pub fn query(&self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
-        self.table.bottom_k_by_metric(&l2_distance, vector, k)
+        self.table.bottom_k_by_metric(&self.distance, vector, k)
+    }
+
+    pub fn matrix_query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
+        self.table
+            .matrix_top_k_by_metric(&self.distance, vector, k, true)
     }
 
     pub fn query_many(&self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {

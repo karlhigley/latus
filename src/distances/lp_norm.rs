@@ -1,13 +1,17 @@
+use crate::distances::Distance;
 use crate::prelude::*;
 
-extern crate ndarray;
-extern crate ndarray_rand;
+#[derive(Debug, PartialEq)]
+pub struct L2 {}
 
-use ndarray::Axis;
+impl Distance for L2 {
+    fn vector_dist(&self, a: &Vector, b: &Vector) -> f32 {
+        let sub = b - a;
+        sub.dot(&sub).sqrt()
+    }
 
-use std::ops::Mul;
-
-pub fn l2_distance(a: &Vector, b: &Vector) -> f32 {
-    let sub = b - a;
-    sub.dot(&sub).sqrt()
+    fn matrix_dist(&self, a: &Vector, b: &Matrix) -> Vector {
+        let sub = b - a;
+        sub.dot(&sub).iter().map(|s| s.sqrt()).collect()
+    }
 }

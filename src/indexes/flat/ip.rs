@@ -1,4 +1,4 @@
-use crate::distances::angular::{inner_product, matrix_inner_product};
+use crate::distances::angular::InnerProduct;
 use crate::prelude::*;
 use crate::primitives::vector_table::{Metric, VectorTable};
 
@@ -7,12 +7,14 @@ use crate::primitives::vector_table::{Metric, VectorTable};
 #[derive(Debug, PartialEq)]
 pub struct IndexFlatIP {
     pub table: VectorTable,
+    distance: InnerProduct,
 }
 
 impl IndexFlatIP {
     pub fn new(dim: usize, chunking: bool) -> IndexFlatIP {
         IndexFlatIP {
             table: VectorTable::new(dim, chunking),
+            distance: InnerProduct {},
         }
     }
 
@@ -25,12 +27,12 @@ impl IndexFlatIP {
     }
 
     pub fn query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
-        self.table.top_k_by_metric(&inner_product, vector, k)
+        self.table.top_k_by_metric(&self.distance, vector, k)
     }
 
     pub fn matrix_query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
         self.table
-            .matrix_top_k_by_metric(&matrix_inner_product, vector, k, false)
+            .matrix_top_k_by_metric(&self.distance, vector, k, false)
     }
 
     pub fn query_many(&mut self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {

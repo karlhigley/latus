@@ -1,6 +1,6 @@
+use crate::distances::hyperbolic::HalfPlane;
+use crate::distances::Distance;
 use crate::prelude::*;
-
-use crate::distances::hyperbolic::{half_plane_distance, matrix_half_plane_dist};
 use crate::primitives::vector_table::{Metric, VectorTable};
 
 // TODO: Refactor this and IndexFlatL2 to implement trait(s)
@@ -8,12 +8,14 @@ use crate::primitives::vector_table::{Metric, VectorTable};
 #[derive(Debug, PartialEq)]
 pub struct IndexFlatHP {
     pub table: VectorTable,
+    distance: HalfPlane,
 }
 
 impl IndexFlatHP {
     pub fn new(dim: usize, chunking: bool) -> IndexFlatHP {
         IndexFlatHP {
             table: VectorTable::new(dim, chunking),
+            distance: HalfPlane {},
         }
     }
 
@@ -26,12 +28,12 @@ impl IndexFlatHP {
     }
 
     pub fn query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
-        self.table.top_k_by_metric(&half_plane_distance, vector, k)
+        self.table.top_k_by_metric(&self.distance, vector, k)
     }
 
     pub fn matrix_query(&mut self, vector: &Vector, k: usize) -> Vec<(Metric, usize)> {
         self.table
-            .matrix_top_k_by_metric(&matrix_half_plane_dist, vector, k, true)
+            .matrix_top_k_by_metric(&self.distance, vector, k, true)
     }
 
     pub fn query_many(&mut self, vectors: &[Vector], k: usize) -> Vec<Vec<(Metric, usize)>> {

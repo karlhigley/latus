@@ -1,3 +1,4 @@
+use crate::distances::Distance;
 use crate::prelude::*;
 
 use ndarray::Array;
@@ -83,14 +84,15 @@ impl VectorTable {
 
     pub fn top_k_by_metric(
         &self,
-        metric_fn: &dyn Fn(&Vector, &Vector) -> f32,
+        distance: &dyn Distance,
+        // metric_fn: &dyn Fn(&dyn Distance, &Vector, &Vector) -> f32,
         vector: &Vector,
         k: usize,
     ) -> Vec<(Metric, usize)> {
         let mut heap: MinMaxHeap<(Metric, usize)> = MinMaxHeap::with_capacity(k);
 
         for (pos, index_vector) in self.vectors.iter().enumerate() {
-            let result = metric_fn(&vector, index_vector);
+            let result = distance.vector_dist(&vector, index_vector);
             let element = (OrderedFloat(result), pos);
             if heap.len() >= k {
                 heap.push_pop_min(element);
@@ -103,7 +105,8 @@ impl VectorTable {
 
     pub fn matrix_top_k_by_metric(
         &mut self,
-        metric_fn: &dyn Fn(&Vector, &Matrix) -> Vector,
+        distance: &dyn Distance,
+        // metric_fn: &dyn Fn(&Vector, &Matrix) -> Vector,
         vector: &Vector,
         k: usize,
         asc: bool,
@@ -132,7 +135,7 @@ impl VectorTable {
 
         // Iterate through the chunks computing distances and inserting into the heap
         for (chunk_index, chunk) in chunks.iter().enumerate() {
-            let results: Vector = metric_fn(&vector, &chunk);
+            let results: Vector = distance.matrix_dist(&vector, &chunk);
 
             let chunk_pos = chunk_index * CHUNK_SIZE;
             let result_positions = Array::from_iter(0..chunk.shape()[0]) + chunk_pos as usize;
@@ -153,14 +156,15 @@ impl VectorTable {
 
     pub fn bottom_k_by_metric(
         &self,
-        metric_fn: &dyn Fn(&Vector, &Vector) -> f32,
+        distance: &dyn Distance,
+        // metric_fn: &dyn Fn(&Vector, &Vector) -> f32,
         vector: &Vector,
         k: usize,
     ) -> Vec<(Metric, usize)> {
         let mut heap: BinaryHeap<(Reverse<Metric>, usize)> = BinaryHeap::with_capacity(k);
 
         for (pos, index_vector) in self.vectors.iter().enumerate() {
-            let result = metric_fn(&vector, index_vector);
+            let result = distance.vector_dist(&vector, index_vector);
             let element = (Reverse(OrderedFloat(result)), pos);
             heap.push(element);
         }
